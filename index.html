@@ -2,20 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width", initial-scale="1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="userinterface.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid Diagram</title>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
 </head>
 <body>
+    <div class="mermaid">
+        flowchart TB
+            subgraph Global
+                GLB[Global Load Balancer]
+            end
+            
+            subgraph Region1[Primary Region]
+                GKE1[GKE Cluster]
+                DB1[Cloud SQL (Primary)]
+                Storage1[Cloud Storage]
+                Monitoring1[Monitoring & Alerts]
+            end
 
-    <div>
-        Header
-    </div>
-    <div>
-        body of content
-    </div>
-    <div>
-        footer
+            subgraph Region2[Failover Region]
+                GKE2[GKE Cluster]
+                DB2[Cloud SQL (Failover)]
+                Storage2[Cloud Storage]
+                Monitoring2[Monitoring & Alerts]
+            end
+
+            User[User Requests] --> GLB
+            GLB --> Region1
+            GLB --> Region2
+
+            GKE1 -->|Replication| GKE2
+            DB1 -->|Replication| DB2
+            Storage1 -->|Data Replication| Storage2
+
+            Monitoring1 -->|Alerts & Monitoring| Monitoring2
     </div>
 </body>
-</html>
